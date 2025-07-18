@@ -16,57 +16,66 @@ El proceso se basa en el siguiente flujo de trabajo:
 
 Pre-requisitos:
 
-Cuenta de GCP.
-Python 3.13.
-pip instalado
+-Cuenta de GCP.
+
+-Python 3.13.
+
+-pip instalado
 
 Configuración del Proyecto GCP (Paso a Paso):
 
-Crear un nuevo proyecto de GCP:
+1. Crear un nuevo proyecto de GCP:
 
-Accede a la Consola de Google Cloud.
+  -Accede a la Consola de Google Cloud.
+  
+  -Haz clic en "Seleccionar un proyecto" en la barra superior > "Nuevo proyecto".
+  
+  -Nombra tu proyecto, por ejemplo, mi-proyecto-infra-gcp. Anota el ID del proyecto.
 
-Haz clic en "Seleccionar un proyecto" en la barra superior > "Nuevo proyecto".
-
-Nombra tu proyecto, por ejemplo, mi-proyecto-infra-gcp. Anota el ID del proyecto.
-
-gcloud projects create mi-proyecto-infra-gcp --name="Mi Proyecto Infra GCP"
-
-gcloud config set project mi-proyecto-infra-gcp
-
-Habilitar APIs necesarias:
+2. Habilitar APIs necesarias:
 
 Desde la "Biblioteca de APIs y Servicios" en la consola de GCP, habilita las siguientes APIs:
 
-Cloud Storage API
+  -Cloud Storage API
+  
+  -Cloud Functions API
+  
+  -Cloud Pub/Sub API
+  
+  -Cloud Logging API
+  
+  -Cloud Build API (Opcional, pero recomendado)
 
-Cloud Functions API
+3. Asignar roles:
+   Para asginar roles necesitamos crear una nueva cuenta que funcionará como un "empleado", a ella le asignamos los roles que se nos indicaron
 
-Cloud Pub/Sub API
+4. Creación de Bucket:
+   Navegamos a la opcion de Cloud Storaged > Buckets, y configuramos uno nuevo personalizandolo con permisos y un ciclo de vida
 
-Cloud Logging API
-
-Cloud Build API (Opcional, pero recomendado)
+5. Creación de una Cloud function:
+  Navegamos hasta Cloud Run para crear la función, esta tiene que estar alojada en la misma región de nuestro bucket, al igual especificamos que actuará sobre el bucket creado.
+  Una vez creado, le pegaremos nuestro código de python (adjuntado en nuestra carpeta del proyecto) a main.py
+  
 Pruebas:
 
-Cómo ejecutar las pruebas unitarias.
+Verificar la activación de la función:
 
-Resultados esperados.
-
-Verificación y Monitoreo:
-
-Cómo verificar que la función se activó (subiendo un archivo al bucket).
-
-Cómo ver los registros en Cloud Logging.
+1. Sube un archivo de prueba (ej. mi-archivo.txt) a tu bucket de Cloud Storage
+2. Verificar los registros en Cloud Logging:
+  Ve al "Menú de Navegación" (☰) > "Operaciones" > "Explorador de registros" (Logs Explorer).
+  Filtra por "Recurso" > "Cloud Function" y selecciona procesar-archivos-storage.
+  Deberías ver los mensajes INFO y WARNING generados por la función, así como los ERROR si subiste un archivo que causó una excepción.
+<img width="1265" height="147" alt="image" src="https://github.com/user-attachments/assets/4d7369e0-bdc6-4bfb-adc0-75d4747ba731" />
 
 Decisiones Técnicas y Configuraciones Aplicadas:
+Elección de Python: Se optó por Python debido a su legibilidad, amplia adopción en el ecosistema de GCP para funciones serverless y la disponibilidad de librerías robustas (google-cloud-storage). 
 
-Explica por qué elegiste Python/Node.js.
+Reglas de Ciclo de Vida en Cloud Storage: Implementadas para optimizar costos y gestionar la retención de datos. Los archivos se mueven a una clase de almacenamiento más económica (Nearline) después de 7 días y se eliminan automáticamente después de 30 días, asegurando que solo los datos relevantes y recientes permanezcan en almacenamiento Standard.
 
-Justifica el uso de reglas de ciclo de vida.
+Principio de Privilegio Mínimo (IAM): La cuenta de servicio usuario-prueba-produccion fue configurada con los roles más restrictivos posibles que le permiten realizar sus tareas específicas (leer/escribir objetos, invocar funciones, escribir logs) sin otorgar permisos innecesarios que podrían representar un riesgo de seguridad.
 
-Explica el principio de privilegio mínimo en IAM.
+Manejo de Errores y Logging Detallado: La Cloud Function incluye bloques try-except para capturar y registrar excepciones inesperadas. El uso de logging.error(..., exc_info=True) asegura que los tracebacks completos se envíen a Cloud Logging, lo cual es fundamental para una depuración eficiente en entornos de producción. Los mensajes INFO y WARNING proporcionan visibilidad sobre el flujo normal y las condiciones atípicas.
 
-Menciona el manejo de errores y logging detallado.
+Conclusión:
+Este proyecto demuestra la capacidad de diseñar, implementar y desplegar una solución de procesamiento de archivos basada en eventos en GCP, priorizando la seguridad (IAM), la eficiencia (reglas de ciclo de vida) y la observabilidad (logging, pruebas unitarias). La arquitectura serverless de Cloud Functions permite una escalabilidad automática y un modelo de pago por uso, ideal para cargas de trabajo variables.
 
-Conclusión: Un breve resumen de lo logrado.
