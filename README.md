@@ -31,6 +31,8 @@ Configuración del Proyecto GCP (Paso a Paso):
   -Haz clic en "Seleccionar un proyecto" en la barra superior > "Nuevo proyecto".
   
   -Nombra tu proyecto, por ejemplo, mi-proyecto-infra-gcp. Anota el ID del proyecto.
+  <img width="1310" height="579" alt="image" src="https://github.com/user-attachments/assets/09261fb8-7eb1-4fc9-8ba5-233536cfa883" />
+
 
 2. Habilitar APIs necesarias:
 
@@ -45,22 +47,32 @@ Desde la "Biblioteca de APIs y Servicios" en la consola de GCP, habilita las sig
   -Cloud Logging API
   
   -Cloud Build API (Opcional, pero recomendado)
+  <img width="1067" height="486" alt="image" src="https://github.com/user-attachments/assets/a81f1a57-1edf-453b-9f32-2fdb8fb241dd" />
+
 
 3. Asignar roles:
    Para asginar roles necesitamos crear una nueva cuenta que funcionará como un "empleado", a ella le asignamos los roles que se nos indicaron
+   <img width="1092" height="480" alt="image" src="https://github.com/user-attachments/assets/a140b727-f0ba-44bb-ae08-4fad5ddb9209" />
 
-4. Creación de Bucket:
+
+5. Creación de Bucket:
    Navegamos a la opcion de Cloud Storaged > Buckets, y configuramos uno nuevo personalizandolo con permisos y un ciclo de vida
+   <img width="1341" height="426" alt="image" src="https://github.com/user-attachments/assets/4ac60be0-611d-4daf-85c1-343c1f420779" />
 
-5. Creación de una Cloud function:
+
+7. Creación de una Cloud function:
   Navegamos hasta Cloud Run para crear la función, esta tiene que estar alojada en la misma región de nuestro bucket, al igual especificamos que actuará sobre el bucket creado.
   Una vez creado, le pegaremos nuestro código de python (adjuntado en nuestra carpeta del proyecto) a main.py
+  <img width="1353" height="627" alt="image" src="https://github.com/user-attachments/assets/fdecf87a-cb10-4ac6-8563-2b992bd12156" />
+
   
 Pruebas:
 
 Verificar la activación de la función:
 
 1. Sube un archivo de prueba (ej. mi-archivo.txt) a tu bucket de Cloud Storage
+   <img width="1102" height="474" alt="image" src="https://github.com/user-attachments/assets/ab0f319a-3207-4fde-8b37-9e48f5169f17" />
+
 2. Verificar los registros en Cloud Logging:
   Ve al "Menú de Navegación" (☰) > "Operaciones" > "Explorador de registros" (Logs Explorer).
   Filtra por "Recurso" > "Cloud Function" y selecciona procesar-archivos-storage.
